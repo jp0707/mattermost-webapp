@@ -1042,6 +1042,10 @@ class CreatePost extends React.PureComponent {
             this.loadPrevMessage(e);
         } else if (ctrlKeyCombo && draftMessageIsEmpty && Utils.isKeyPressed(e, KeyCodes.DOWN)) {
             this.loadNextMessage(e);
+        } else if (ctrlKeyCombo && !draftMessageIsEmpty && Utils.isKeyPressed(e, KeyCodes.B)) {
+            this.applyHotkeyMarkdown(e, KeyCodes.B);
+        } else if (ctrlKeyCombo && !draftMessageIsEmpty && Utils.isKeyPressed(e, KeyCodes.I)) {
+            this.applyHotkeyMarkdown(e, KeyCodes.I);
         }
     }
 
@@ -1085,6 +1089,21 @@ class CreatePost extends React.PureComponent {
     loadNextMessage = (e) => {
         e.preventDefault();
         this.props.actions.moveHistoryIndexForward(Posts.MESSAGE_TYPES.POST).then(() => this.fillMessageFromHistory());
+    }
+
+    applyHotkeyMarkdown = (e, keycode) => {
+        var res = Utils.applyHotkeyMarkdown(e, keycode);
+
+        if (res === null) {
+            return;
+        }
+
+        this.setState({
+            message: res.message,
+        }, () => {
+            var textbox = this.refs.textbox.getInputBox();
+            Utils.setSelectionRange(textbox, res.selectionStart, res.selectionEnd);
+        });
     }
 
     reactToLastMessage = (e) => {

@@ -1787,3 +1787,53 @@ export function getSortedUsers(reactions, currentUserId, profiles, teammateNameD
 
     return {currentUserReacted, users};
 }
+
+/**
+ * Applies bold/italic markdown on textbox associated with event and returns
+ * modified text alongwith modified selection positions.
+ */
+export function applyHotkeyMarkdown(e, keycode) {
+    const el = e.target;
+    const {selectionEnd, selectionStart, value} = el;
+
+    if (selectionStart === selectionEnd) {
+        // nothing is selected;
+        return null;
+    }
+
+    e.preventDefault();
+
+    var delimiter = '';
+    if (keycode === Constants.KeyCodes.B) {
+        delimiter = '**';
+    } else if (keycode === Constants.KeyCodes.I) {
+        delimiter = '*';
+    }
+
+    // <prefix> <delimiter> <selection> <delimiter> <suffix>
+    var prefix = value.substring(0, selectionStart);
+    var selection = value.substring(selectionStart, selectionEnd);
+    var suffix = value.substring(selectionEnd);
+
+    var newValue = '';
+    var newStart = 0;
+    var newEnd = 0;
+    if (prefix.endsWith(delimiter) && suffix.startsWith(delimiter)) {
+        // message already has the markdown; remove it
+        prefix = prefix.substring(0, prefix.length - delimiter.length);
+        suffix = suffix.substring(delimiter.length);
+        newValue = prefix + selection + suffix;
+        newStart = selectionStart - delimiter.length;
+        newEnd = selectionEnd - delimiter.length;
+    } else {
+        newValue = prefix + delimiter + selection + delimiter + suffix;
+        newStart = selectionStart + delimiter.length;
+        newEnd = selectionEnd + delimiter.length;
+    }
+
+    return {
+        message: newValue,
+        selectionStart: newStart,
+        selectionEnd: newEnd,
+    };
+}
