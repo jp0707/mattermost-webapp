@@ -1094,10 +1094,6 @@ class CreatePost extends React.PureComponent {
     applyHotkeyMarkdown = (e, keycode) => {
         var res = Utils.applyHotkeyMarkdown(e, keycode);
 
-        if (res === null) {
-            return;
-        }
-
         this.setState({
             message: res.message,
         }, () => {

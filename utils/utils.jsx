@@ -1793,15 +1793,10 @@ export function getSortedUsers(reactions, currentUserId, profiles, teammateNameD
  * modified text alongwith modified selection positions.
  */
 export function applyHotkeyMarkdown(e, keycode) {
+    e.preventDefault();
+
     const el = e.target;
     const {selectionEnd, selectionStart, value} = el;
-
-    if (selectionStart === selectionEnd) {
-        // nothing is selected;
-        return null;
-    }
-
-    e.preventDefault();
 
     var delimiter = '';
     if (keycode === Constants.KeyCodes.B) {
